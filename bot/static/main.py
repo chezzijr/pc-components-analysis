@@ -1,5 +1,4 @@
 import asyncio
-from bs4 import BeautifulSoup
 import aiohttp
 import pandas as pd
 import json
