@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from dateparser import parse
+import pandas
 
 
 @dataclass
@@ -15,7 +16,7 @@ class Gpu():
     clock_speed : int # in MHz
     memory_clock : int # in MHz
 
-    def getAttributeFromDfRow(self, row):
+    def getAttributeFromDfRow(self, row : pandas.core.series.Series):
         """Get attributes from a row of a dataframe
             Sample : 
             "Product Name": "3D Rage",
@@ -38,7 +39,7 @@ class Gpu():
         self.clock_speed = int(row['clock_speed'].split(" ")[0])
         self.memory_clock = int(row['memory_clock'].split(" ")[0])
 
-    def exportToDict(self):
+    def exportToDict(self) -> dict  :
         return {
             "product_name": self.product_name,
             "gpu_chip": self.gpu_chip,
@@ -50,4 +51,3 @@ class Gpu():
             "clock_speed": self.clock_speed,
             "memory_clock": self.memory_clock
         }
-        
