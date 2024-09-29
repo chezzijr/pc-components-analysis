@@ -31,6 +31,12 @@ class Gpu():
         self.gpu_chip = row['gpu_chip']
         self.release = date(parse(row['release']))
         self.bus = row['bus']
+        if row['memory'] == "System Shared":
+            #do sth
+            self.memory_clock = 0
+            self.memory_size = 0
+            self.memory_type = "System Shared"
+            self.memory_width = 0
         memory = row['memory'].split(", ")
         if "GB" in memory[0]:
             self.memory_size = int(memory[0].split(" ")[0]) * 1024
@@ -39,7 +45,7 @@ class Gpu():
         self.clock_speed = int(row['clock_speed'].split(" ")[0])
         self.memory_clock = int(row['memory_clock'].split(" ")[0])
 
-    def exportToDict(self) -> dict  :
+    def toDict(self) -> dict  :
         return {
             "product_name": self.product_name,
             "gpu_chip": self.gpu_chip,

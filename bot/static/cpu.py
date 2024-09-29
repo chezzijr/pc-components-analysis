@@ -39,7 +39,7 @@ class Cpu():
         self.tdp = int(row['tdp'].split(" ")[0])
         self.release = date(parse(row['release']))
     
-    def exportToDict(self):
+    def toDict(self):
         return {
             "name": self.name,
             "code_name": self.code_name,
