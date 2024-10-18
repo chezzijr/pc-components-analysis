@@ -75,6 +75,6 @@ rag_chain = (
 )
 
 result = rag_chain.invoke(
-    "compares AMD Ryzen 7 7800X3D and AMD Ryzen 5 7600X"
+    input()
 )
 print(result)
