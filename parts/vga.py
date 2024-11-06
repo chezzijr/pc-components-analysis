@@ -1,17 +1,23 @@
-from dataclasses import dataclass
+from __future__ import annotations
+from typing import Optional
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+from .base import Component
 
+class VGA(Component):
+    __tablename__ = "vgas"
+    __mapper_args__ = {
+        "polymorphic_identity": "vga",
+    }
 
-@dataclass
-class VGA:
-    name: str
-    chipset: str
-    memory: float  # in GB
-    core_clock: float | None  # in MHz
-    boost_clock: float | None  # in MHz
-    color: str | None # ignore
-    length: int | None
+    id: Mapped[int] = mapped_column(ForeignKey("components.id"), primary_key=True)
+    chipset: Mapped[str]
+    memory: Mapped[float]  # in GB
+    core_clock: Mapped[Optional[float]]  # in MHz
+    boost_clock: Mapped[Optional[float]]  # in MHz
+    length: Mapped[Optional[int]]
 
-    def __str__(self):
+    def __repr__(self):
         return (
             f"The {self.name} Video Graphics Array (VGA) or Graphics Processing Unit (GPU) or Graphics Card "
             f"is powered by the {self.chipset} chipset, "

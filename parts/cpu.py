@@ -1,18 +1,25 @@
-from dataclasses import dataclass
+from __future__ import annotations
+from .base import Component
+from typing import Optional
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-@dataclass
-class CPU:
-    name: str
-    core_count: int
-    core_clock: float
-    boost_clock: float | None
-    tdp: int
-    graphics: str | None  # integrated graphics
-    smt: bool  # simultaneous multithreading
+class CPU(Component):
+    __tablename__ = "cpus"
+    __mapper_args__ = {
+        "polymorphic_identity": "cpu",
+    }
+    id: Mapped[int] = mapped_column(ForeignKey("components.id"), primary_key=True)
+    core_count: Mapped[int]
+    core_clock: Mapped[float]
+    boost_clock: Mapped[Optional[float]]
+    tdp: Mapped[int]
+    graphics: Mapped[Optional[str]]  # integrated graphics
+    smt: Mapped[bool]  # simultaneous multithreading
 
     # we need to flatten our dataclass in a manner that’s convenient to plug it into Chroma
-    def __str__(self):
+    def __repr__(self):
         return (
             f"The {self.name} Central Processing Unit (CPU) "
             f"features {self.core_count} cores running at a base clock of {self.core_clock} GHz "
