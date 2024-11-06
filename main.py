@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from parts import CPU
 from parts import VGA
-from langchain import hub
 from langchain.schema import StrOutputParser
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.runnables import RunnablePassthrough
@@ -49,7 +48,6 @@ else:
     )
 
 retriever = vectorstore.as_retriever()
-# prompt = hub.pull("rlm/rag-prompt")
 prompt = PromptTemplate.from_template(
     (
         "You are an assistant for question-answering tasks. "

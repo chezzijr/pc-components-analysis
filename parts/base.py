@@ -21,15 +21,3 @@ class Price(Base):
     source: Mapped[str]
     component_id: Mapped[int] = mapped_column(ForeignKey("components.id"))
     component: Mapped[Component] = relationship(back_populates="prices")
-
-"""
-SELECT COUNT(*)
-FROM EMPLOYEE
-WHERE SALARY > 40000 AND DNO in (
-    SELECT COUNT(*) AS dno_count
-    FROM EMPLOYEE
-    GROUP BY DNO
-    HAVING COUNT(*) > 2
-)
-GROUP BY DNO
-"""

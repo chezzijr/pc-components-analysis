@@ -1,8 +1,10 @@
 import asyncio
+import re
 import aiohttp
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
+
 
 @dataclass
 class Product:
@@ -10,7 +12,11 @@ class Product:
     price: int
     currency: str
     source: str
-    category: str = "VGA"
+
+
+def clean_name(name: str):
+    return re.sub(r"<.*?>", "", name)
+
 
 def match_name(product_name: str, query: str):
     """
@@ -26,6 +32,7 @@ def match_name(product_name: str, query: str):
             return False
     return True
 
+
 async def bs4_page_content(url: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -35,7 +42,8 @@ async def bs4_page_content(url: str):
     soup = BeautifulSoup(content, "html.parser")
     return soup
 
-async def ttg(query: str):
+
+async def ttg(query: str) -> list[Product]:
     base_url = "https://ttgshop.vn"
     query_url = "https://ttgshop.vn/search?type=product&q={query}"
 
@@ -55,13 +63,12 @@ async def ttg(query: str):
                 price=price,
                 currency="VND",
                 source=base_url,
-                category="VGA",
             )
         )
     return products
 
 
-async def gearvn(query: str):
+async def gearvn(query: str) -> list[Product]:
     base_url = "https://gearvn.com"
     products_search_url = "https://gearvn.com/apps/gvn_search/search_products"
     async with aiohttp.ClientSession() as session:
@@ -85,13 +92,13 @@ async def gearvn(query: str):
                     price=product["price"],
                     currency="VND",
                     source=base_url,
-                    category=product["product_type"],
                 )
                 for product in products
             ]
             return products
 
-async def tinhocngoisao(query: str):
+
+async def tinhocngoisao(query: str) -> list[Product]:
     base_url = "https://tinhocngoisao.com"
     search_url = "https://tinhocngoisao.com/search?q=filter=(title%3Aproduct**%20{query})%7C%7C(sku%3Aproduct**%20{query})"
     url = search_url.format(query=quote(query))
@@ -110,15 +117,42 @@ async def tinhocngoisao(query: str):
                 price=price,
                 currency="VND",
                 source=base_url,
-                category="VGA",
             )
         )
     return products
 
-async def main():
-    query = "Gigabyte WINDFORCE OC GeForce RTX 4070"
-    products = await asyncio.gather(ttg(query), gearvn(query), tinhocngoisao(query))
-    products = [product for sublist in products for product in sublist]
-    print(products)
 
-asyncio.run(main())
+async def memoryzone(query: str) -> list[Product]:
+    search_url = "https://memoryzone.aecomapp.com/api/store/query?query={query}&page=1"
+    url = search_url.format(query=quote(query))
+    async with aiohttp.ClientSession() as session:
+        headers = {
+            "Ae-Api-Key": "2",
+        } 
+        async with session.get(url, headers=headers) as response:
+            if response.status not in (200, 201):
+                return []
+            body = await response.json()
+            products = body["data"]
+            products = [
+                Product(
+                    name=clean_name(product["name"]),
+                    price=product["price"],
+                    currency="VND",
+                    source="https://memoryzone.com.vn",
+                )
+                for product in products
+            ]
+            return products
+
+
+async def query_all_shops(query: str):
+    crawlers = [ttg, gearvn, tinhocngoisao, memoryzone]
+    products = await asyncio.gather(*(crawl(query) for crawl in crawlers))
+    products = [product for sublist in products for product in sublist]
+    products = [product for product in products if match_name(product.name, query)]
+    print(products)
+    return products
+
+
+# asyncio.run(query_all_shops("Corsair Vengeance RGB 32GB"))

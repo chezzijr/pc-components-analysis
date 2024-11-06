@@ -11,5 +11,7 @@ dependencies = [
     "pandas>=2.2.3",
     "langchain-chroma>=0.1.4",
     "beautifulsoup4>=4.12.3",
-    "crawl4ai>=0.3.72",
+    "sqlalchemy>=2.0.35",
+    "pydantic-settings>=2.6.1",
+    "psycopg2-binary>=2.9.10",
 ]
