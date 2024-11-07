@@ -18,6 +18,9 @@ class CPU(Component):
     graphics: Mapped[Optional[str]]  # integrated graphics
     smt: Mapped[bool]  # simultaneous multithreading
 
+    def to_query(self) -> str:
+        return f"{self.name}"
+
     # we need to flatten our dataclass in a manner that’s convenient to plug it into Chroma
     def __repr__(self):
         return (

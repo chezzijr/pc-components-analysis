@@ -13,8 +13,13 @@ class RAM(Component):
     memory_size: Mapped[int]
     memory_type: Mapped[str]
     bus_speed: Mapped[int]
+    module_sticks: Mapped[int]
+    module_capacity: Mapped[int]
     first_word_latency: Mapped[float] # in nanoseconds
-    cas_latency: Mapped[int] # in clock cycles
+    cas_latency: Mapped[float] # in clock cycles
+
+    def to_query(self) -> str:
+        return f"{self.name} {self.memory_size}GB"
 
     def __repr__(self):
         return (

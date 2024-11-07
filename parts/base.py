@@ -11,7 +11,7 @@ class Component(Base):
     __tablename__ = "components"
     __mapper_args__ = {"polymorphic_identity": "component"}
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str]
     prices: Mapped[List[Price]] = relationship(back_populates="component")
 
 class Price(Base):

@@ -17,6 +17,9 @@ class VGA(Component):
     boost_clock: Mapped[Optional[float]]  # in MHz
     length: Mapped[Optional[int]]
 
+    def to_query(self) -> str:
+        return f"{self.name} {self.chipset}GB"
+
     def __repr__(self):
         return (
             f"The {self.name} Video Graphics Array (VGA) or Graphics Processing Unit (GPU) or Graphics Card "
