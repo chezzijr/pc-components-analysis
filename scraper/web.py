@@ -1,10 +1,13 @@
 import asyncio
 import re
 import aiohttp
+import logging
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
+from parts import Price
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Product:
@@ -12,6 +15,13 @@ class Product:
     price: int
     currency: str
     source: str
+
+    def to_price(self, cid: int) -> Price:
+        return Price(
+            component_id=cid,
+            price=self.price,
+            source=self.source,
+        )
 
 
 def clean_name(name: str):
@@ -21,16 +31,24 @@ def clean_name(name: str):
 def match_name(product_name: str, query: str):
     """
     Check if the query matches the product name
+    There some edge case such as WIFI but the product name is Wi-Fi
+    Remove those hyphen will lead to incorrect name like the model name
+    So use Longest Common Subsequence to check if the query is a substring of the product name
     """
-    tokens = query.lower().split()
+    substring = query.lower()
     punctuation = "()"
     for p in punctuation:
         product_name = product_name.replace(p, "")
-    target = product_name.lower().split()
-    for token in tokens:
-        if token not in target:
-            return False
-    return True
+    target = product_name.lower()
+    n, m = len(substring), len(target)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if substring[i - 1] == target[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[n][m] >= n
 
 
 async def bs4_page_content(url: str):
@@ -148,11 +166,11 @@ async def memoryzone(query: str) -> list[Product]:
 
 async def query_all_shops(query: str):
     crawlers = [ttg, gearvn, tinhocngoisao, memoryzone]
-    products = await asyncio.gather(*(crawl(query) for crawl in crawlers))
-    products = [product for sublist in products for product in sublist]
+    results = await asyncio.gather(*(crawl(query) for crawl in crawlers), return_exceptions=True)
+    for i, result in enumerate(results):
+        if isinstance(result, BaseException):
+            logger.error(f"Error in crawling {crawlers[i].__name__} with query {query}: {result}")
+    products = [product for sublist in results if isinstance(sublist, list) for product in sublist]
     products = [product for product in products if match_name(product.name, query)]
-    print(products)
+    logger.info(f"Found {len(products)} products for query {query}")
     return products
-
-
-# asyncio.run(query_all_shops("Corsair Vengeance RGB 32GB"))
