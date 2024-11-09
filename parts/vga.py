@@ -18,7 +18,7 @@ class VGA(Component):
     length: Mapped[Optional[int]]
 
     def to_query(self) -> str:
-        return f"{self.name} {self.chipset}GB"
+        return f"{self.name} {self.chipset}"
 
     def __repr__(self):
         return (

@@ -10,7 +10,6 @@ class Mainboard(Component):
         "polymorphic_identity": "mainboard",
     }
     id: Mapped[int] = mapped_column(ForeignKey("components.id"), primary_key=True)
-    name: Mapped[str]
     socket: Mapped[str]
     form_factor: Mapped[str]
     max_memory: Mapped[int]
