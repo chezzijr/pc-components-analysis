@@ -27,6 +27,25 @@ class Product:
 def clean_name(name: str):
     return re.sub(r"<.*?>", "", name)
 
+def match_by_tokens(product_name: str, query: str):
+    tokens = query.split()
+    prod_tokens = product_name.split()
+    for token in tokens:
+        if token not in prod_tokens:
+            return False
+    return True
+
+def match_by_lcs(product_name: str, query: str):
+    n, m = len(query), len(product_name)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if query[i - 1] == product_name[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[n][m] >= n
+    
 
 def match_name(product_name: str, query: str):
     """
@@ -40,15 +59,7 @@ def match_name(product_name: str, query: str):
     for p in punctuation:
         product_name = product_name.replace(p, "")
     target = product_name.lower()
-    n, m = len(substring), len(target)
-    dp = [[0] * (m + 1) for _ in range(n + 1)]
-    for i in range(1, n + 1):
-        for j in range(1, m + 1):
-            if substring[i - 1] == target[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1] + 1
-            else:
-                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-    return dp[n][m] >= n
+    return match_by_tokens(target, substring) or match_by_lcs(target, substring)
 
 
 async def bs4_page_content(url: str):
