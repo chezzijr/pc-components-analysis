@@ -138,16 +138,25 @@ async def tinhocngoisao(query: str) -> list[Product]:
     products = []
     for container in product_containers:
         name = container.select_one("a.productName").text
-        price = container.select_one("p.pdPrice span").text
-        price = int("".join(filter(str.isdigit, price)))
-        products.append(
-            Product(
-                name=name,
-                price=price,
-                currency="VND",
-                source=base_url,
+        priceText = container.select_one("p.pdPrice span").text
+        # in this website, price can be text like "Liên hệ" or multiple prices like "1.000.000 - 2.000.000"
+        prices = priceText.split("-")
+        try:
+            prices = map(lambda x: int("".join(filter(str.isdigit, x))), prices)
+            products.extend(
+                [
+                    Product(
+                        name=name,
+                        price=price,
+                        currency="VND",
+                        source=base_url,
+                    )
+                    for price in prices
+                ]
             )
-        )
+        except ValueError:
+            logger.error(f"Error parsing price {priceText} for product {name} from {base_url}")
+
     return products
 
 
