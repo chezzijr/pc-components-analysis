@@ -17,13 +17,3 @@ class Mainboard(Component):
 
     def to_query(self) -> str:
         return f"{self.name}"
-
-    # we need to flatten our dataclass in a manner that’s convenient to plug it into Chroma
-    def __repr__(self):
-        return (
-            f"The {self.name} Mainboard or Motherboard is the central printed circuit board (PCB) "
-            f"that holds and allows communication between crucial electronic components of a computer system. "
-            f"It features {self.memory_type} memory type, "
-            f"with a bus speed of {self.bus_speed} MHz, "
-            f"and supports {self.memory_size} GB of RAM"
-        )

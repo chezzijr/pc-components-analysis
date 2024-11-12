@@ -20,13 +20,3 @@ class RAM(Component):
 
     def to_query(self) -> str:
         return f"{self.name} {self.memory_size}GB"
-
-    def __repr__(self):
-        return (
-            f"The {self.name} Random Access Memory (RAM) module "
-            f"has a memory size of {self.memory_size} GB, "
-            f"features {self.memory_type} memory type, "
-            f"with a bus speed of {self.bus_speed} MHz, "
-            f"a first word latency of {self.first_word_latency} ns "
-            f"and a CAS latency of {self.cas_latency} clock cycles"
-        )

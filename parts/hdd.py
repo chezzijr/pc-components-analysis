@@ -18,6 +18,6 @@ class HDD(Component):
     interface: Mapped[str]
     
     def to_query(self) -> str:
-        size = f"{self.capacity}GB" if self.capacity < 1000 else f"{self.capacity // 1000}TB"
+        size = f"{self.capacity}GB" if self.capacity < 1000 else f"{self.capacity / 1000}TB"
         return f"{self.name} {size}"
 
