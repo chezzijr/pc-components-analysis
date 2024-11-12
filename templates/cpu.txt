@@ -1,0 +1,15 @@
+{% for cpu in cpus -%}
+{{ cpu.name }} CPU (central processing unit) has these specifications:
+- Cores: {{ cpu.core_count }}
+- Base frequency: {{ cpu.core_clock }} GHz
+- Boost frequency: {% if cpu.boost_clock %}{{ cpu.boost_clock }} GHz{% else %}Unknown{% endif %}
+- Thermal design power (TDP): {{ cpu.tdp }} W
+- Integrated graphics: {% if cpu.graphics %}{{ cpu.graphics }}{% else %}Unknown{% endif %}
+{% if cpu.smt %}- Supports{% else %}- Does not support{% endif %} simultaneous multithreading (SMT)
+{% if cpu.prices -%}
+Prices for {{ cpu.name }} CPU are as follows:
+{% for price in cpu.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}

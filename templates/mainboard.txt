@@ -1,0 +1,14 @@
+{% for mainboard in mainboards -%}
+{{ mainboard.name }} Mainboard (or Motherboard) has these specifications:
+- Socket: {{ mainboard.socket }}
+- Form factor: {{ mainboard.form_factor }}
+- Max memory: {{ mainboard.max_memory }}
+- Memory slots: {{ mainboard.memory_slots }}
+{% if mainboard.prices -%}
+Prices for {{ mainboard.name }} Mainboard are as follows:
+{% for price in mainboard.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}
+

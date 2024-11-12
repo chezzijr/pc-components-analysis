@@ -1,0 +1,14 @@
+{% for hdd in hdds -%}
+{{ hdd.name }} HDD (Hard Disk Drive) has these specifications:
+- Capacity: {{ hdd.capacity }} GB
+- RPM (Revolutions per Minute): {% if hdd.rpm %}{{ hdd.rpm }}{% else %}Unknown{% endif %}
+- Cache: {% if hdd.cache %}{{ hdd.cache }} MB{% else %}Unknown{% endif %}
+- Form factor: {{ hdd.form_factor }}
+- Interface: {{ hdd.interface }}
+{% if hdd.prices -%}
+Prices for {{ hdd.name }} HDD are as follows:
+{% for price in hdd.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}

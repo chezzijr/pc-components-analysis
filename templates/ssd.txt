@@ -1,0 +1,13 @@
+{% for ssd in ssds -%}
+{{ ssd.name }} SSD (Solid State Drive) has these specifications:
+- Capacity: {{ ssd.capacity }} GB
+- Cache: {% if ssd.cache %}{{ ssd.cache }} MB{% else %}Unknown{% endif %}
+- Form factor: {{ ssd.form_factor }}
+- Interface: {{ ssd.interface }}
+{% if ssd.prices -%}
+Prices for {{ ssd.name }} SSD are as follows:
+{% for price in ssd.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}

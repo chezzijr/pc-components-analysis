@@ -1,0 +1,17 @@
+{% for ram in rams -%}
+{{ ram.name }} RAM (Random Access Memory) has these specifications:
+- Type: DDR{{ ram.memory_type }}
+- Size: {{ ram.memory_size }} GB
+- Bus speed: {{ ram.bus_speed }} MHz
+- Module sticks: {{ ram.module_sticks }}
+- Module capacity: {{ ram.module_capacity }} GB
+- First word latency: {{ ram.first_word_latency }} ns
+- CAS latency: {{ ram.cas_latency }} cycles
+{% if ram.prices -%}
+Prices for {{ ram.name }} RAM are as follows:
+{% for price in ram.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}
+

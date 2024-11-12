@@ -1,0 +1,15 @@
+{% for vga in vgas -%}
+{{ vga.name }} {{ vga.chipset }} VGA (Video Graphics Adapter) has these specifications:
+- Chipset: {{ vga.chipset }}
+- Memory: {{ vga.memory }} GB
+- Core clock: {{ vga.core_clock }} MHz
+- Boost clock: {{ vga.boost_clock }} MHz
+- Length: {% if vga.length %}{{ vga.length }} mm{% else %}Unknown{% endif %}
+{% if vga.prices -%}
+Prices for {{ vga.name }} {{ vga.chipset }} VGA are as follows:
+{% for price in vga.prices -%}
+- {{ price.price }} VND at {{ price.source }} (updated at {{ price.created_at.strftime('%Y-%m-%d') }})
+{% endfor %}
+{%- endif %}
+{% endfor %}
+
