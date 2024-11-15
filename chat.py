@@ -215,9 +215,9 @@ def chat():
 
     chat_history = []
     while (question := input("Question: ")) != "quit":
-        relevant_docs = retriever.invoke(question)
-        for doc in relevant_docs:
-            print(doc.page_content)
+        # relevant_docs = retriever.invoke(question)
+        # for doc in relevant_docs:
+        #     print(doc.page_content)
         ai_response = rag_chain.invoke({
             "input": question,
             "chat_history": chat_history,
