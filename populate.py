@@ -27,18 +27,37 @@ def chunking[T](seq: Sequence[T], size: int):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 def insert_components():
-    with Session(engine) as session:
-        for csv, constructor in csv_to_constructor_map.items():
-            data = pd.read_csv(f"./datasets/refined/{csv}")
-            data = data.replace({np.nan: None})
-            for _, row in data.iterrows():
-                component = constructor(**row.to_dict())
-                session.add(component)
-        session.commit()
+    tables = [CPU, VGA, RAM, Mainboard, SSD, HDD]
+    table_names = [table.__name__.lower() for table in tables]
+    if all(exists(join("./obj", f"{table_name}.pkl")) for table_name in table_names):
+        logger.info("Loading from cache...")
+        for table in tables:
+            with open(f"./obj/{table.__name__.lower()}.pkl", "rb") as f:
+                rows = pickle.load(f)
+            with Session(engine) as session:
+                session.add_all(rows)
+                session.commit()
+    else:
+        with Session(engine) as session:
+            for csv, constructor in csv_to_constructor_map.items():
+                data = pd.read_csv(f"./datasets/refined/{csv}")
+                data = data.replace({np.nan: None})
+                for _, row in data.iterrows():
+                    component = constructor(**row.to_dict())
+                    session.add(component)
+            session.commit()
 
 async def insert_prices():
-    obj_dir = "./obj"
-    if not exists(obj_dir):
+    table = Price
+    table_name = table.__name__.lower()
+    if exists(join("./obj", f"{table_name}.pkl")):
+        logger.info("Loading from cache...")
+        with open(f"./obj/{table_name}.pkl", "rb") as f:
+            rows = pickle.load(f)
+        with Session(engine) as session:
+            session.add_all(rows)
+            session.commit()
+    else:
         with Session(engine) as session:
             tables = [CPU, VGA, RAM, Mainboard, SSD, HDD]
             prices = []
@@ -66,14 +85,12 @@ async def insert_prices():
                 logger.info(f"Inserting {len(prices)} prices...")
                 session.add_all(prices)
                 session.commit()
-    else:
-        files = listdir(obj_dir)
-        file_paths = [join(obj_dir, file) for file in files]
-        prices = []
-        for file_path in file_paths:
-            with open(file_path, "rb") as f:
-                prices.extend(pickle.load(f))
+
+def save_cache():
+    # save all database into pickle
+    tables = [CPU, VGA, RAM, Mainboard, SSD, HDD, Price]
+    for table in tables:
         with Session(engine) as session:
-            logger.info(f"Inserting {len(prices)} prices...")
-            session.add_all(prices)
-            session.commit()
+            rows = session.execute(select(table)).scalars().all()
+            with open(f"./obj/{table.__name__.lower()}.pkl", "wb") as f:
+                pickle.dump(rows, f)
