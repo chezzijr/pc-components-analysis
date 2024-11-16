@@ -149,7 +149,7 @@ def chat():
             documents.extend(loader.load())
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000, chunk_overlap=200, add_start_index=True
+            chunk_size=1000, chunk_overlap=0, add_start_index=True
         )
         splits = text_splitter.split_documents(documents)
         vectorstore = Chroma.from_documents(
@@ -215,9 +215,6 @@ def chat():
 
     chat_history = []
     while (question := input("Question: ")) != "quit":
-        # relevant_docs = retriever.invoke(question)
-        # for doc in relevant_docs:
-        #     print(doc.page_content)
         ai_response = rag_chain.invoke({
             "input": question,
             "chat_history": chat_history,
