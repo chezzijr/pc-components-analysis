@@ -1,5 +1,5 @@
 {% for ram in rams -%}
-{{ ram.name }} RAM (Random Access Memory) has these specifications:
+{{ ram.name }} {{ ram.memory_size }}GB RAM (Random Access Memory) has these specifications:
 - Type: DDR{{ ram.memory_type }}
 - Size: {{ ram.memory_size }} GB
 - Bus speed: {{ ram.bus_speed }} MHz
