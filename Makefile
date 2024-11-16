@@ -1,6 +1,8 @@
 up:
-	docker compose up -d --build --renew-anon-volumes
+	docker compose up -d
 stop:
 	docker compose stop
 down:
 	docker compose down
+doc:
+	uv run document.py
