@@ -1,5 +1,4 @@
 services:
-  # Main database
   postgres:
     image: postgres:alpine
     container_name: postgres
@@ -8,6 +7,8 @@ services:
       - .env
     ports:
       - ${POSTGRES_PORT}:5432
+    networks:
+      - wholeapp
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -19,3 +20,52 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+
+  ollama:
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: ollama/ollama
+    ports:
+      - ${OLLAMA_PORT}:${OLLAMA_PORT}
+    env_file:
+      - .env
+    networks:
+      - wholeapp
+    command: >
+      sh -c "curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey
+              | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &&
+            curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list \
+              | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' \
+              | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list &&
+            sudo apt-get update &&
+            sudo apt-get install -y nvidia-container-toolkit"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  app:
+    depends_on:
+      - postgres
+      - ollama
+    build:
+      dockerfile: Dockerfile
+    container_name: app
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_HOST=ollama
+      - POSTGRES_HOST=postgres
+    networks:
+      - wholeapp
+    ports:
+      - ${STREAMLIT_PORT}:${STREAMLIT_PORT}
+    volumes:
+      - ./chroma_langchain_db:/app/chroma_langchain_db
+
+networks:
+  wholeapp:
