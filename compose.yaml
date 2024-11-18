@@ -33,6 +33,8 @@ services:
       - wholeapp
     env_file:
       - .env
+    environment:
+      - OLLAMA_HOST=0.0.0.0
     volumes:
       - ./entrypoint.sh:/entrypoint.sh
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
