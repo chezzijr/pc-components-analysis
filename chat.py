@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.callbacks import StreamingStdOutCallbackHandler
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_community.llms.ollama import Ollama
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.callbacks.manager import CallbackManager
@@ -137,7 +138,10 @@ if exists("./chroma_langchain_db"):
     vectorstore = Chroma(
         collection_name="pc_parts",
         persist_directory="./chroma_langchain_db",
-        embedding_function=OllamaEmbeddings(model="nomic-embed-text"),
+        embedding_function=OllamaEmbeddings(
+            model="nomic-embed-text",
+            base_url=f"https://{settings.OLLAMA_HOST}:{settings.OLLAMA_PORT}",
+        ),
     )
 else:
     models = [CPU, VGA, RAM, SSD, HDD, Mainboard]
@@ -159,9 +163,7 @@ else:
         collection_name="pc_parts",
     )
 
-retriever = vectorstore.as_retriever(
-    search_type="similarity", search_kwargs={"k": 6}
-)
+retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 6})
 llm = ChatOllama(
     model="llama3.2:1b",
     num_ctx=2 * 4096,
