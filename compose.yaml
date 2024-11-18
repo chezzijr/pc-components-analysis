@@ -29,8 +29,6 @@ services:
     image: ollama/ollama
     ports:
       - ${OLLAMA_PORT}:${OLLAMA_PORT}
-    env_file:
-      - .env
     networks:
       - wholeapp
     command: >
