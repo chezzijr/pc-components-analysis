@@ -140,7 +140,7 @@ if exists("./chroma_langchain_db"):
         persist_directory="./chroma_langchain_db",
         embedding_function=OllamaEmbeddings(
             model="nomic-embed-text",
-            base_url=f"https://{settings.OLLAMA_HOST}:{settings.OLLAMA_PORT}",
+            base_url=f"http://{settings.OLLAMA_HOST}:{settings.OLLAMA_PORT}",
         ),
     )
 else:
@@ -169,7 +169,7 @@ llm = ChatOllama(
     num_ctx=2 * 4096,
     num_gpu=20,
     # callbacks=CallbackManager([StreamingStdOutCallbackHandler()]),
-    base_url=f"https://{settings.OLLAMA_HOST}:{settings.OLLAMA_PORT}",
+    base_url=f"http://{settings.OLLAMA_HOST}:{settings.OLLAMA_PORT}",
     temperature=0,
 )
 
