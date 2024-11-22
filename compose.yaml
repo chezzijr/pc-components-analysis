@@ -4,7 +4,7 @@ services:
     container_name: postgres
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.example
     ports:
       - ${POSTGRES_PORT}:5432
     networks:
@@ -23,16 +23,18 @@ services:
 
   ollama:
     container_name: ollama
-    pull_policy: always
-    tty: true
+    # pull_policy: always
+    # tty: true
     restart: unless-stopped
-    image: ollama/ollama
+    # image: ollama/ollama
+    build:
+      dockerfile: ollama.Dockerfile
     ports:
       - ${OLLAMA_PORT}:11434
     networks:
       - wholeapp
     env_file:
-      - .env
+      - .env.example
     environment:
       - OLLAMA_HOST=0.0.0.0
     deploy:
@@ -52,7 +54,7 @@ services:
         STREAMLIT_PORT: ${STREAMLIT_PORT}
     container_name: app
     env_file:
-      - .env
+      - .env.example
     environment:
       - OLLAMA_HOST=ollama
       - OLLAMA_PORT=11434
