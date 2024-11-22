@@ -48,6 +48,8 @@ services:
       - ollama
     build:
       dockerfile: Dockerfile
+      args:
+        STREAMLIT_PORT: ${STREAMLIT_PORT}
     container_name: app
     env_file:
       - .env
