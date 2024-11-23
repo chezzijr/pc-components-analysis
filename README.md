@@ -16,6 +16,3 @@ An application that get data of pc components then perform analysis on such data
 ### Running
 First run could take up some time
 ```docker compose up -d```
-
-### Sources
-[Tech Power Up](https://www.techpowerup.com)
