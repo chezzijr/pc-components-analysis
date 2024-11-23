@@ -10,9 +10,16 @@ An application that get data of pc components then perform analysis on such data
 - Dynamic information will always be attached to a specific time, normalized then update to database
 - Analysis using the data we have collected so far
 
-### Conventions
-- All the sizes will be converted to MB
+### Structure
+- `datasets/`: initial crawled data and its refined version
+- `logs/`: crawling logs
+- `obj/`: crawled data
+- `templates/`: to generate descriptions for components in natural language
+- `documents/`: generated descriptions
 
 ### Running
+Run whole app: ```docker compose up -d``` <br>
 First run could take up some time
-```docker compose up -d```
+
+This project uses uv as project manager. To sync the virtual environment: `uv sync` <br>
+Generate documents: `uv run document.py`
