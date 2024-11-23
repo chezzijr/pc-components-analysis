@@ -1,5 +1,5 @@
 {% for hdd in hdds -%}
-{{ hdd.name }} HDD (Hard Disk Drive) has these specifications:
+{{ hdd.name }} {{ hdd.capacity }}GB HDD (Hard Disk Drive) has these specifications:
 - Capacity: {{ hdd.capacity }} GB
 - RPM (Revolutions per Minute): {% if hdd.rpm %}{{ hdd.rpm }}{% else %}Unknown{% endif %}
 - Cache: {% if hdd.cache %}{{ hdd.cache }} MB{% else %}Unknown{% endif %}

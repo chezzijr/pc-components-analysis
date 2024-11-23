@@ -1,5 +1,5 @@
 {% for ssd in ssds -%}
-{{ ssd.name }} SSD (Solid State Drive) has these specifications:
+{{ ssd.name }} {{ ssd.capacity }}GB SSD (Solid State Drive) has these specifications:
 - Capacity: {{ ssd.capacity }} GB
 - Cache: {% if ssd.cache %}{{ ssd.cache }} MB{% else %}Unknown{% endif %}
 - Form factor: {{ ssd.form_factor }}
